@@ -4,6 +4,7 @@ namespace App\Services\Shared;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class FileUploadService
@@ -44,6 +45,15 @@ class FileUploadService
         return (int) config('uploads.max_size.default', 2048);
     }
 
+    public static function imageRules(?string $key = null): array
+    {
+        return [
+            config('uploads.validation.image_rule', 'image'),
+            'mimes:'.implode(',', self::allowedImageMimes()),
+            'max:'.self::maxSize($key),
+        ];
+    }
+
     public function store(UploadedFile $file, string $directory, ?string $filename = null): string
     {
         $disk = $this->disk();
@@ -51,9 +61,11 @@ class FileUploadService
         $this->guardDirectory($directory);
 
         try {
-            $storedPath = $filename !== null
-                ? $file->storeAs($directory, $filename, $disk)
-                : $file->store($directory, $disk);
+            $storedPath = $file->storeAs(
+                $directory,
+                $this->generateFilename($file, $filename),
+                $disk
+            );
 
             $this->logger->info('File stored successfully', [
                 'action' => 'file_store',
@@ -180,5 +192,13 @@ class FileUploadService
         if (! in_array($directory, self::directories(), true)) {
             throw new InvalidArgumentException("Unsupported upload directory [{$directory}].");
         }
+    }
+
+    private function generateFilename(UploadedFile $file, ?string $filename = null): string
+    {
+        $extension = pathinfo((string) $filename, PATHINFO_EXTENSION);
+        $extension = $extension !== '' ? strtolower($extension) : $file->extension();
+
+        return (string) Str::uuid().($extension ? ".{$extension}" : '');
     }
 }
