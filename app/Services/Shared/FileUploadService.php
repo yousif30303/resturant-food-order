@@ -9,6 +9,7 @@ use InvalidArgumentException;
 class FileUploadService
 {
     public function __construct(
+        private readonly AppLogger $logger,
         private readonly ?string $disk = null
     ) {
     }
@@ -49,18 +50,61 @@ class FileUploadService
 
         $this->guardDirectory($directory);
 
-        if ($filename !== null) {
-            return $file->storeAs($directory, $filename, $disk);
-        }
+        try {
+            $storedPath = $filename !== null
+                ? $file->storeAs($directory, $filename, $disk)
+                : $file->store($directory, $disk);
 
-        return $file->store($directory, $disk);
+            $this->logger->info('File stored successfully', [
+                'action' => 'file_store',
+                'entity_type' => 'file',
+                'entity_id' => null,
+                'status' => 'success',
+                'disk' => $disk,
+                'directory' => $directory,
+                'stored_path' => $storedPath,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType(),
+                'size' => $file->getSize(),
+            ]);
+
+            return $storedPath;
+        } catch (\Throwable $exception) {
+            $this->logger->error('File upload failed', [
+                'action' => 'file_store',
+                'entity_type' => 'file',
+                'entity_id' => null,
+                'status' => 'failed',
+                'disk' => $disk,
+                'directory' => $directory,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType(),
+                'size' => $file->getSize(),
+                'error' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
+        }
     }
 
     public function replace(?string $oldPath, UploadedFile $file, string $directory, ?string $filename = null): string
     {
         $this->delete($oldPath);
 
-        return $this->store($file, $directory, $filename);
+        $storedPath = $this->store($file, $directory, $filename);
+
+        $this->logger->info('File replaced successfully', [
+            'action' => 'file_replace',
+            'entity_type' => 'file',
+            'entity_id' => null,
+            'status' => 'success',
+            'disk' => $this->disk(),
+            'directory' => $directory,
+            'old_path' => $oldPath,
+            'stored_path' => $storedPath,
+        ]);
+
+        return $storedPath;
     }
 
     public function delete(?string $path): bool
@@ -69,7 +113,43 @@ class FileUploadService
             return false;
         }
 
-        return Storage::disk($this->disk())->delete($path);
+        try {
+            $deleted = Storage::disk($this->disk())->delete($path);
+
+            if ($deleted) {
+                $this->logger->info('File deleted successfully', [
+                    'action' => 'file_delete',
+                    'entity_type' => 'file',
+                    'entity_id' => null,
+                    'status' => 'success',
+                    'disk' => $this->disk(),
+                    'stored_path' => $path,
+                ]);
+            } else {
+                $this->logger->warning('File delete skipped or failed', [
+                    'action' => 'file_delete',
+                    'entity_type' => 'file',
+                    'entity_id' => null,
+                    'status' => 'warning',
+                    'disk' => $this->disk(),
+                    'stored_path' => $path,
+                ]);
+            }
+
+            return $deleted;
+        } catch (\Throwable $exception) {
+            $this->logger->error('File delete failed', [
+                'action' => 'file_delete',
+                'entity_type' => 'file',
+                'entity_id' => null,
+                'status' => 'failed',
+                'disk' => $this->disk(),
+                'stored_path' => $path,
+                'error' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
+        }
     }
 
     public function exists(?string $path): bool
