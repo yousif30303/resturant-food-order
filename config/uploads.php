@@ -36,4 +36,8 @@ return [
         'webp',
     ],
 
+    'validation' => [
+        'image_rule' => 'image',
+    ],
+
 ];
