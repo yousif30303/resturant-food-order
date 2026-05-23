@@ -67,87 +67,17 @@
                   </div>
                   <h6 class="mt-4 text-shadow text-white font-weight-normal">E.g. Beverages, Pizzas, Chinese, Bakery, Indian...</h6>
                   <div class="owl-carousel owl-carousel-category owl-theme">
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/1.png') }}" alt="">
-                              <h6>American</h6>
-                              <p>156</p>
-                           </a>
+                     @foreach ($quickSearchCategories as $category)
+                        <div class="item">
+                           <div class="osahan-category-item">
+                              <a href="#">
+                                 <img class="img-fluid" src="{{ asset($category['image']) }}" alt="{{ $category['name'] }}">
+                                 <h6>{{ $category['name'] }}</h6>
+                                 <p>{{ $category['count'] }}</p>
+                              </a>
+                           </div>
                         </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/2.png') }}" alt="">
-                              <h6>Pizza</h6>
-                              <p>120</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/3.png') }}" alt="">
-                              <h6>Healthy</h6>
-                              <p>130</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/4.png') }}" alt="">
-                              <h6>Vegetarian</h6>
-                              <p>120</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/5.png') }}" alt="">
-                              <h6>Chinese</h6>
-                              <p>111</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/6.png') }}" alt="">
-                              <h6>Hamburgers</h6>
-                              <p>958</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/7.png') }}" alt="">
-                              <h6>Dessert</h6>
-                              <p>56</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/8.png') }}" alt="">
-                              <h6>Chicken</h6>
-                              <p>40</p>
-                           </a>
-                        </div>
-                     </div>
-                     <div class="item">
-                        <div class="osahan-category-item">
-                           <a href="#">
-                              <img class="img-fluid" src="{{ asset('website/assets/img/list/9.png') }}" alt="">
-                              <h6>Indian</h6>
-                              <p>156</p>
-                           </a>
-                        </div>
-                     </div>
+                     @endforeach
                   </div>
                </div>
              
@@ -158,26 +88,15 @@
       <section class="section pt-5 pb-5 bg-white homepage-add-section">
          <div class="container">
             <div class="row">
-               <div class="col-md-3 col-6">
-                  <div class="products-box">
-                     <a href="listing.html"><img alt="" src="{{ asset('website/assets/img/pro1.jpg') }}" class="img-fluid rounded"></a>
+               @foreach ($homepagePromotions as $promotion)
+                  <div class="col-md-3 col-6">
+                     <div class="products-box">
+                        <a href="#">
+                           <img alt="{{ $promotion['alt'] }}" src="{{ asset($promotion['image']) }}" class="img-fluid rounded">
+                        </a>
+                     </div>
                   </div>
-               </div>
-               <div class="col-md-3 col-6">
-                  <div class="products-box">
-                     <a href="listing.html"><img alt="" src="{{ asset('website/assets/img/pro2.jpg') }}" class="img-fluid rounded"></a>
-                  </div>
-               </div>
-               <div class="col-md-3 col-6">
-                  <div class="products-box">
-                     <a href="listing.html"><img alt="" src="{{ asset('website/assets/img/pro3.jpg') }}" class="img-fluid rounded"></a>
-                  </div>
-               </div>
-               <div class="col-md-3 col-6">
-                  <div class="products-box">
-                     <a href="listing.html"><img alt="" src="{{ asset('website/assets/img/pro4.jpg') }}" class="img-fluid rounded"></a>
-                  </div>
-               </div>
+               @endforeach
             </div>
          </div>
       </section>
