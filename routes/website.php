@@ -10,7 +10,7 @@ Route::name('website.')->group(function () {
 
     Route::prefix('restaurants')->name('restaurants.')->controller(RestaurantController::class)->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/{restaurant:slug}', 'show')->name('show');
+        Route::get('/{restaurant}', 'show')->name('show');
     });
 
     Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
