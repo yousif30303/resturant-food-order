@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\City;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class RestaurantController extends Controller
@@ -48,6 +49,17 @@ class RestaurantController extends Controller
 
     public function show(Restaurant $restaurant): View
     {
-        return view('website.restaurants.show', compact('restaurant'));
+        $restaurant->load(['category', 'city']);
+
+        abort_unless(
+            $restaurant->status === 'approved'
+                && $restaurant->city?->is_active
+                && $restaurant->category?->is_active,
+            404
+        );
+
+        $galleryItems = new Collection();
+
+        return view('website.restaurants.show', compact('restaurant', 'galleryItems'));
     }
 }
