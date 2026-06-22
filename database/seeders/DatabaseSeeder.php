@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             ClientSeeder::class,
             RestaurantSeeder::class,
+            GallerySeeder::class,
         ]);
     }
 }
