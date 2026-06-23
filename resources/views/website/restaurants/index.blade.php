@@ -15,11 +15,11 @@
             <form method="GET" action="{{ route('website.restaurants.index') }}" class="bg-light rounded shadow-sm p-3 mb-4">
                 <div class="form-row align-items-end">
                     <div class="col-md-5 mb-3 mb-md-0">
-                        <label for="city" class="font-weight-bold">City</label>
-                        <select name="city" id="city" class="custom-select">
+                        <label for="city_id" class="font-weight-bold">City</label>
+                        <select name="city_id" id="city_id" class="custom-select">
                             <option value="">All cities</option>
                             @foreach ($cities as $city)
-                                <option value="{{ $city->slug }}" @selected($filters['city'] === $city->slug)>
+                                <option value="{{ $city->id }}" @selected($filters['city_id'] === $city->id || $filters['city'] === $city->slug)>
                                     {{ $city->name }}
                                 </option>
                             @endforeach
@@ -27,11 +27,11 @@
                     </div>
 
                     <div class="col-md-5 mb-3 mb-md-0">
-                        <label for="category" class="font-weight-bold">Category</label>
-                        <select name="category" id="category" class="custom-select">
+                        <label for="category_id" class="font-weight-bold">Category</label>
+                        <select name="category_id" id="category_id" class="custom-select">
                             <option value="">All categories</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->slug }}" @selected($filters['category'] === $category->slug)>
+                                <option value="{{ $category->id }}" @selected($filters['category_id'] === $category->id || $filters['category'] === $category->slug)>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -40,7 +40,7 @@
 
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary btn-block">Filter</button>
-                        @if ($filters['city'] || $filters['category'])
+                        @if ($filters['city_id'] || $filters['category_id'] || $filters['city'] || $filters['category'])
                             <a href="{{ route('website.restaurants.index') }}" class="btn btn-link btn-block mt-2">Clear</a>
                         @endif
                     </div>
