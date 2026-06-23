@@ -14,6 +14,8 @@ class RestaurantController extends Controller
     public function index(Request $request): View
     {
         $filters = [
+            'city_id' => $request->integer('city_id') ?: null,
+            'category_id' => $request->integer('category_id') ?: null,
             'city' => is_string($request->query('city')) ? $request->query('city') : null,
             'category' => is_string($request->query('category')) ? $request->query('category') : null,
         ];
@@ -33,6 +35,12 @@ class RestaurantController extends Controller
             ->where('status', 'approved')
             ->whereHas('city', fn ($query) => $query->where('is_active', true))
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->when($filters['city_id'], function ($query, int $cityId) {
+                $query->where('city_id', $cityId);
+            })
+            ->when($filters['category_id'], function ($query, int $categoryId) {
+                $query->where('category_id', $categoryId);
+            })
             ->when($filters['city'], function ($query, string $citySlug) {
                 $query->whereHas('city', fn ($cityQuery) => $cityQuery->where('slug', $citySlug));
             })
