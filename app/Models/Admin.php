@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use Notifiable;
+    use HasRoles, Notifiable;
+
+    protected string $guard_name = 'admin';
 
     protected $fillable = [
         'name',
         'email',
         'password',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -24,6 +28,7 @@ class Admin extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
     }

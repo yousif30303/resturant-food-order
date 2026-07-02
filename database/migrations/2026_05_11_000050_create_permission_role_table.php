@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('permission_role', function (Blueprint $table) {
-            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
+        Schema::create('role_has_permissions', function (Blueprint $table) {
             $table->foreignId('permission_id')->constrained('permissions')->cascadeOnDelete();
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
 
-            $table->primary(['role_id', 'permission_id']);
+            $table->primary(['permission_id', 'role_id'], 'role_has_permissions_permission_id_role_id_primary');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('permission_role');
+        Schema::dropIfExists('role_has_permissions');
     }
 };
