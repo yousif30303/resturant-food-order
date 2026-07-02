@@ -2,39 +2,41 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use RuntimeException;
+use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $now = Carbon::now();
+        $role = Role::findOrCreate('super-admin', 'admin');
+        $email = env('ADMIN_DEFAULT_EMAIL', 'admin@example.com');
+        $password = env('ADMIN_DEFAULT_PASSWORD');
 
-        DB::table('admins')->updateOrInsert(
-            ['email' => 'admin@restaurant.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('password'),
-                'is_active' => true,
-                'email_verified_at' => $now,
-                'updated_at' => $now,
-                'created_at' => $now,
-            ]
-        );
-
-        $adminId = DB::table('admins')->where('email', 'admin@restaurant.com')->value('id');
-        $roleId = DB::table('roles')->where('slug', 'super-admin')->value('id');
-
-        if ($adminId && $roleId) {
-            DB::table('admin_role')->upsert([
-                [
-                    'admin_id' => $adminId,
-                    'role_id' => $roleId,
-                ],
-            ], ['admin_id', 'role_id'], []);
+        if (! $password && app()->isProduction()) {
+            throw new RuntimeException('ADMIN_DEFAULT_PASSWORD must be set before seeding the default admin in production.');
         }
+
+        $admin = Admin::firstOrNew(['email' => $email]);
+
+        if (! $admin->exists) {
+            $admin->password = Hash::make($password ?? 'password');
+        }
+
+        $admin->fill([
+            'name' => env('ADMIN_DEFAULT_NAME', 'Super Admin'),
+            'email' => $email,
+            'is_active' => true,
+        ]);
+
+        if (! $admin->email_verified_at) {
+            $admin->email_verified_at = now();
+        }
+
+        $admin->save();
+        $admin->assignRole($role);
     }
 }
