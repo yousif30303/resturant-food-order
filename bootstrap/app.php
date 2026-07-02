@@ -30,6 +30,18 @@ return Application::configure(basePath: dirname(__DIR__))
             'active.client' => EnsureClientIsActive::class,
             'active.user' => EnsureUserIsActive::class,
         ]);
+
+        $middleware->redirectGuestsTo(function (Request $request): ?string {
+            return $request->is('admin') || $request->is('admin/*')
+                ? route('admin.auth.login')
+                : null;
+        });
+
+        $middleware->redirectUsersTo(function (Request $request): ?string {
+            return $request->is('admin/login')
+                ? route('admin.dashboard')
+                : null;
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Throwable $exception, Request $request) {
