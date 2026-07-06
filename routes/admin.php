@@ -10,7 +10,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:admin-login')->name('auth.attempt');
     });
 
-    Route::middleware('auth:admin')->group(function () {
+    Route::middleware(['auth:admin', 'active.admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [LoginController::class, 'destroy'])->name('auth.logout');
     });

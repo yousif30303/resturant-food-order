@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\EnsureAdminIsActive;
+use App\Http\Middleware\AdminActiveMiddleware;
 use App\Http\Middleware\EnsureClientIsActive;
 use App\Http\Middleware\EnsureUserIsActive;
 use Illuminate\Foundation\Application;
@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'active.admin' => EnsureAdminIsActive::class,
+            'active.admin' => AdminActiveMiddleware::class,
             'active.client' => EnsureClientIsActive::class,
             'active.user' => EnsureUserIsActive::class,
         ]);
