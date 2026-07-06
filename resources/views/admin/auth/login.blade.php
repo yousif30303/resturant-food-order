@@ -38,6 +38,12 @@
                                     <form method="POST" action="{{ route('admin.auth.attempt') }}" class="mt-4 pt-2">
                                         @csrf
 
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ $errors->first() }}
+                                            </div>
+                                        @endif
+
                                         <div class="mb-3">
                                             <label class="form-label" for="email">Email</label>
                                             <input
