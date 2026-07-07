@@ -173,6 +173,8 @@ Each broker uses its own provider while sharing the same reset token table in v1
 
 - table: `password_reset_tokens`
 
+This shared table is the project convention for v1 and matches Laravel's current password reset migration. Actor separation is handled by the broker/provider pair, not by separate token tables.
+
 Why:
 
 - reset logic remains isolated by actor type

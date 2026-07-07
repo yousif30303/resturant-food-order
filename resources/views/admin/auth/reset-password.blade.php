@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Admin Login</title>
+    <title>Admin Reset Password</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Restaurant admin login" name="description" />
+    <meta content="Restaurant admin password reset" name="description" />
 
     <link rel="shortcut icon" href="{{ asset('backend/assets/images/favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/preloader.min.css') }}" type="text/css" />
@@ -31,18 +31,13 @@
 
                                 <div class="auth-content my-auto">
                                     <div class="text-center">
-                                        <h5 class="mb-0">Welcome Back</h5>
-                                        <p class="text-muted mt-2">Sign in to continue to the admin panel.</p>
+                                        <h5 class="mb-0">Create New Password</h5>
+                                        <p class="text-muted mt-2">Choose a new password for your admin account.</p>
                                     </div>
 
-                                    <form method="POST" action="{{ route('admin.auth.attempt') }}" class="mt-4 pt-2">
+                                    <form method="POST" action="{{ route('admin.auth.password.update') }}" class="mt-4 pt-2">
                                         @csrf
-
-                                        @if (session('status'))
-                                            <div class="alert alert-success" role="alert">
-                                                {{ session('status') }}
-                                            </div>
-                                        @endif
+                                        <input type="hidden" name="token" value="{{ $token }}">
 
                                         @if ($errors->any())
                                             <div class="alert alert-danger" role="alert">
@@ -57,10 +52,9 @@
                                                 class="form-control @error('email') is-invalid @enderror"
                                                 id="email"
                                                 name="email"
-                                                value="{{ old('email') }}"
+                                                value="{{ old('email', $email) }}"
                                                 placeholder="Enter email"
                                                 autocomplete="email"
-                                                autofocus
                                                 required
                                             >
                                             @error('email')
@@ -75,8 +69,8 @@
                                                 class="form-control @error('password') is-invalid @enderror"
                                                 id="password"
                                                 name="password"
-                                                placeholder="Enter password"
-                                                autocomplete="current-password"
+                                                placeholder="Enter new password"
+                                                autocomplete="new-password"
                                                 required
                                             >
                                             @error('password')
@@ -84,24 +78,21 @@
                                             @enderror
                                         </div>
 
-                                        <div class="form-check">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="password_confirmation">Confirm Password</label>
                                             <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                id="remember"
-                                                name="remember"
-                                                value="1"
-                                                @checked(old('remember'))
+                                                type="password"
+                                                class="form-control"
+                                                id="password_confirmation"
+                                                name="password_confirmation"
+                                                placeholder="Confirm new password"
+                                                autocomplete="new-password"
+                                                required
                                             >
-                                            <label class="form-check-label" for="remember">Remember me</label>
-                                        </div>
-
-                                        <div class="mt-3 text-end">
-                                            <a href="{{ route('admin.auth.forgot-password') }}" class="text-muted">Forgot password?</a>
                                         </div>
 
                                         <div class="mb-3 mt-4">
-                                            <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Log In</button>
+                                            <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Reset Password</button>
                                         </div>
                                     </form>
                                 </div>
