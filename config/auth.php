@@ -114,6 +114,8 @@ return [
     |
     */
 
+    // Project convention: all actor-specific password brokers share Laravel's
+    // password_reset_tokens table; isolation comes from each broker's provider.
     'passwords' => [
         'users' => [
             'provider' => 'users',

@@ -39,6 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectUsersTo(function (Request $request): ?string {
             return $request->is('admin/login')
+                || $request->is('admin/forgot-password')
+                || $request->is('admin/reset-password')
+                || $request->is('admin/reset-password/*')
                 ? route('admin.dashboard')
                 : null;
         });
